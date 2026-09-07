@@ -5,7 +5,7 @@ from app.core.database import get_db
 from app.core.security import get_current_user
 from app.models.metric import Metric
 from app.models.user import User
-from app.repositories.alert_rule_repository import get_alert_rules
+from app.queue.jobs import enqueue_job
 from app.repositories.metric_repository import (
     create_metric,
     get_metrics,
@@ -14,7 +14,6 @@ from app.schemas.metric import (
     MetricCreate,
     MetricResponse,
 )
-from app.services.alert_engine import evaluate_alert_rule
 
 router = APIRouter(
     prefix="/metrics",
@@ -40,21 +39,17 @@ def create_new_metric(
 
     metric = create_metric(db, metric)
 
-    rules = get_alert_rules(
-        db,
-        service_id=data.service_id,
+    job = enqueue_job(
+        "PROCESS_METRIC",
+        {
+            "metric_id": metric.id,
+        },
     )
 
-    for rule in rules:
-
-        if rule.metric_name != data.name:
-            continue
-
-        evaluate_alert_rule(
-            db,
-            rule,
-            data.value,
-        )
+    print(
+        f"Queued metric #{metric.id} "
+        f"as job {job['id']}"
+    )
 
     return metric
 

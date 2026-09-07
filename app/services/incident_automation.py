@@ -2,6 +2,7 @@ from datetime import datetime
 
 from sqlalchemy.orm import Session
 
+from app.core.events import publish_event
 from app.models.alert import Alert
 from app.models.incident import Incident
 from app.models.incident_event import IncidentEvent
@@ -66,5 +67,15 @@ def create_incident_from_alert(
 
     db.commit()
     db.refresh(incident)
+
+    publish_event(
+        "INCIDENT_CREATED",
+        {
+            "incident_id": incident.id,
+            "service_id": incident.service_id,
+            "severity": incident.severity,
+            "status": incident.status,
+        },
+    )
 
     return incident
