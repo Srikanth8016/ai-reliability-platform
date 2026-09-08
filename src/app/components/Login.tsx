@@ -4,7 +4,7 @@ import { useState } from "react";
 import { fetchApi, setAuthToken } from "@/lib/api";
 import { Activity, Lock, Mail, ArrowRight } from "lucide-react";
 
-export default function Login({ onLogin }: { onLogin: () => void }) {
+export default function Login({ onLoginAction }: { onLoginAction: () => void }) {
   const [email, setEmail] = useState("admin@example.com");
   const [password, setPassword] = useState("admin123");
   const [error, setError] = useState("");
@@ -22,7 +22,7 @@ export default function Login({ onLogin }: { onLogin: () => void }) {
       });
       
       setAuthToken(data.access_token);
-      onLogin();
+      onLoginAction();
     } catch (err: any) {
       setError(err.message || "Failed to log in");
     } finally {

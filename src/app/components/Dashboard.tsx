@@ -5,9 +5,9 @@ import { Activity, BellRing, Wifi, WifiOff, LogOut, Loader2 } from "lucide-react
 import { Incident, IncidentCard } from "./IncidentCard";
 import { fetchApi, clearAuthToken } from "@/lib/api";
 
-const WS_URL = typeof window !== "undefined" ? `ws://${window.location.host}/api/v1/ws/events` : "";
+const WS_URL = "ws://127.0.0.1:8000/api/v1/ws/events";
 
-export default function Dashboard({ onLogout }: { onLogout: () => void }) {
+export default function Dashboard({ onLogoutAction }: { onLogoutAction: () => void }) {
   const [incidents, setIncidents] = useState<Incident[]>([]);
   const [serviceNames, setServiceNames] = useState<Record<number, string>>({});
   const [connected, setConnected] = useState(false);
@@ -144,7 +144,7 @@ export default function Dashboard({ onLogout }: { onLogout: () => void }) {
 
   const handleLogout = () => {
     clearAuthToken();
-    onLogout();
+    onLogoutAction();
   };
 
   if (loading) {

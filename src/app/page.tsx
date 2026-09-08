@@ -34,9 +34,9 @@ export default function Home() {
   return (
     <main className="min-h-screen">
       {isAuthenticated ? (
-        <Dashboard onLogout={handleLogout} />
+        <Dashboard onLogoutAction={handleLogout} />
       ) : (
-        <Login onLogin={handleLogin} />
+        <Login onLoginAction={handleLogin} />
       )}
     </main>
   );
