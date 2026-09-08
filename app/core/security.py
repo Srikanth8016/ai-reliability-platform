@@ -90,3 +90,22 @@ def get_current_user(
         raise credentials_exception
 
     return user
+
+
+def decode_access_token(token: str) -> str | None:
+    try:
+        payload = jwt.decode(
+            token,
+            settings.jwt_secret_key,
+            algorithms=[settings.jwt_algorithm],
+        )
+
+        user_id = payload.get("sub")
+
+        if not user_id:
+            return None
+
+        return user_id
+
+    except JWTError:
+        return None

@@ -9,6 +9,7 @@ from app.models.incident_event import IncidentEvent
 from app.repositories.incident_repository import (
     get_active_incident_for_service,
 )
+from app.repositories.outbox_repository import create_outbox_event
 
 
 def create_incident_from_alert(
@@ -51,7 +52,7 @@ def create_incident_from_alert(
     )
 
     db.add(incident)
-    db.flush()
+    db.flush()  # get incident.id without committing
 
     event = IncidentEvent(
         incident_id=incident.id,
@@ -65,9 +66,22 @@ def create_incident_from_alert(
 
     db.add(event)
 
+    # Write outbox event in the SAME transaction — atomic with the incident
+    create_outbox_event(
+        db=db,
+        event_type="INCIDENT_CREATED",
+        payload={
+            "incident_id": incident.id,
+            "service_id": incident.service_id,
+            "severity": incident.severity,
+            "status": incident.status,
+        },
+    )
+
     db.commit()
     db.refresh(incident)
 
+    # Pub/Sub for immediate live notification (best-effort, not durable)
     publish_event(
         "INCIDENT_CREATED",
         {

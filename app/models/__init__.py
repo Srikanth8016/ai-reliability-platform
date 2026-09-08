@@ -7,6 +7,7 @@ from app.models.log import Log
 from app.models.metric import Metric
 from app.models.alert import Alert
 from app.models.alert_rule import AlertRule
+from app.models.outbox_event import OutboxEvent
 
 __all__ = [
     "User",
@@ -18,4 +19,5 @@ __all__ = [
     "Metric",
     "Alert",
     "AlertRule",
+    "OutboxEvent",
 ]

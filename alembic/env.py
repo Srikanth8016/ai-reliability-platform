@@ -15,6 +15,7 @@ from app.models.log import Log  # noqa: F401
 from app.models.metric import Metric  # noqa: F401
 from app.models.alert import Alert  # noqa: F401
 from app.models.alert_rule import AlertRule  # noqa: F401
+from app.models.outbox_event import OutboxEvent  # noqa: F401
 
 config = context.config
 
